@@ -1,6 +1,0 @@
-﻿<%@ Master Language="C#" MasterPageFile="~/AdminLayout.Master" AutoEventWireup="true" CodeBehind="AdminDesignView.master.cs" Inherits="WebForm.AdminDesignView" %>
-
-<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-     <h2>Child master</h2>
-    <asp:ContentPlaceHolder ID="ChildContent1" runat="server" />
-</asp:Content>

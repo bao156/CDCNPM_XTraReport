@@ -28,6 +28,7 @@
     <link href="/Assets/intro/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <link href="/Assets/intro/lib/animate/animate.min.css" rel="stylesheet">
     <link href="/Assets/intro/lib/modal-video/css/modal-video.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <!-- Main Stylesheet File -->
     <link href="/Assets/intro/css/style.css" rel="stylesheet">
@@ -55,11 +56,11 @@
        
 
             
-        <asp:DropDownList ID="cbNameDatabase" runat="server" DataSourceID="SqlDataSource1" DataTextField="name" DataValueField="name" style="margin-bottom:20px;width:400px;height:50px;margin-top:50px;text-align:center">
+               <asp:DropDownList ID="cbNameDatabase" runat="server" DataSourceID="SqlDataSource1" DataTextField="name" DataValueField="name" style="margin-bottom:20px;width:400px;height:50px;margin-top:50px;text-align:center;border-radius:10px;border-color:darkgreen">
                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:Java5ConnectionString %>" SelectCommand="SELECT * FROM [database_name]"></asp:SqlDataSource>
             
-            <asp:LinkButton class="btn-get-started scrollto" id="btnStart" runat="server" OnClick="btnStart_Click">Get Start</asp:LinkButton>
+            <asp:LinkButton class="btn-get-started scrollto" id="btnStart" runat="server" OnClick="btnStart_Click" >Get Start</asp:LinkButton>
              </div>
     </section><!-- #hero -->
 
@@ -90,7 +91,6 @@
         </div>
 
     </footer>
-
 
 
     <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>

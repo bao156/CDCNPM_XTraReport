@@ -9,12 +9,14 @@
     <title>Dashboard - Automatic Report</title>
 
     <link rel="stylesheet" href="/Assets/admin/assets/css/bootstrap.css">
-
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="/Assets/admin/assets/vendors/chartjs/Chart.min.css">
-
+    <script src="https://kit.fontawesome.com/yourcode.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="/Assets/admin/assets/vendors/perfect-scrollbar/perfect-scrollbar.css">
     <link rel="stylesheet" href="/Assets/admin/assets/css/app.css">
     <link rel="shortcut icon" href="/Assets/admin/assets/title.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
 </head>
@@ -24,86 +26,20 @@
         <div id="sidebar" class='active'>
             <div class="sidebar-wrapper active">
                 <div class="sidebar-header" >
-                    <img src="/Assets/admin/assets/logonew.png" alt="" srcset="" style="width:300px;height:280px;margin-left:-50px" >
+                    <img src="/Assets/admin/assets/logonew.png" alt="" srcset="" style="width:300px;height:280px;margin-left:-50px;" >
                      <select name="cars" id="cars" style="width:200px;margin-left:-20px;height:50px">
-                                  <option value="volvo">SQL View</option>
+                             <option value="volvo" style="font-size:30px">SQL View</option>
                                   <option value="saab">Datasheet View</option>
                                   <option value="mercedes">Design View</option>
                     </select>
                 </div>
                 <div class="sidebar-menu">
                     <ul class="menu">
-                        <li class='sidebar-title'>All Tables</li>
+                        <li class='sidebar-title'> <h3 style="font-weight:bold;font-family:Arial,Helvetica, sans-serif"><i class="fas fa-home" style="font-size:30px;color:lightblue;text-shadow:2px 2px 4px #000000;"></i>&nbsp;All Tables</h3></li>
                        
-                    
-                    <%
-                        var todo_list=getListTable();
-                        foreach(var item in todo_list)
-                        {
-                            Response.Write("<li class=\"sidebar-item active\">"+
-                                           " <a href=\"index.html\" class=\'sidebar-link\'>"+
-                                           " <i data-feather=\"grid\" width=\"20\" style=\"color:#00804d\"></i>"+
-                                           "<span>"+ item+"</span>"+
-                                           " </a>"+
-                                           "</li>");
-                        }
+                <asp:PlaceHolder ID="PlaceHolder1" runat="server">
+                            </asp:PlaceHolder>
 
-                      
-                    %>
-
-
-
-
-
-<%--                        <li class="sidebar-item active ">
-                            <a href="index.html" class='sidebar-link'>
-                                <i data-feather="home" width="20" style="color:#00804d"></i>
-                                <span>Dashboard</span>
-                            </a>
-                        </li>--%>
-
-
-
-<%--                        <li class='sidebar-title'>Forms &amp; Tables</li>
-
-
-                        <li class="sidebar-item  ">
-                            <a href="form-layout.html" class='sidebar-link'>
-                                <i data-feather="layout" width="20" style="color:#00804d"></i>
-                                <span>Form Layout</span>
-                            </a>
-
-                        </li>
-
-
-
-
-                        <li class="sidebar-item  ">
-                            <a href="form-editor.html" class='sidebar-link'>
-                                <i data-feather="layers" width="20"style="color:#00804d"></i>
-                                <span>Form Editor</span>
-                            </a>
-
-                        </li>
-
-                        <li class="sidebar-item  ">
-                            <a href="table.html" class='sidebar-link'>
-                                <i data-feather="grid" width="20"style="color:#00804d"></i>
-                                <span>Table</span>
-                            </a>
-
-                        </li>
-
-
-
-
-                        <li class="sidebar-item  ">
-                            <a href="table-datatable.html" class='sidebar-link'>
-                                <i data-feather="file-plus" width="20"style="color:#00804d"></i>
-                                <span>Datatable</span>
-                            </a>
-
-                        </li>--%>
                 
                 </div>
                 <button class="sidebar-toggler btn x"><i data-feather="x" ></i></button>
@@ -128,16 +64,16 @@
              
             <div class="main-content container-fluid">
                 <div class="page-title">
-                       <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+                       <asp:ContentPlaceHolder  ID="SheetContent" runat="server" />
                 </div>
-                 
+                 <h1 style="margin-bottom:400px"></h1>
             </div>
 
-            <footer>
+           <%--<footer>
                 <div class="footer clearfix mb-0 text-muted">
-                 
+                        <asp:ContentPlaceHolder ID="SheetContent" runat="server" />
                 </div>
-            </footer>
+            </footer>--%>
         </div>
     </div>
     <script src="/Assets/admin/assets/js/feather-icons/feather.min.js"></script>

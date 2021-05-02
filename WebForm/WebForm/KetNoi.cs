@@ -17,6 +17,9 @@ namespace WebForm
         public static String username = "";
         public static String mlogin = "sa";
         public static String password = "123456";
+        public static HashSet<string> listTable=new HashSet<string>();
+        public static string database = "";
+        public static HashSet<ObjectQuery> ObjectQueryList = new HashSet<ObjectQuery>();
         public static int Connect(string database)
         {
             if (KetNoi.conn != null && KetNoi.conn.State == ConnectionState.Open)
@@ -68,6 +71,7 @@ namespace WebForm
 
         public static int ExecSqlNonQuery(String strlenh)
         {
+            ObjectQuery a = new ObjectQuery();
             SqlCommand Sqlcmd = new SqlCommand(strlenh, conn);
             Sqlcmd.CommandType = CommandType.Text;
             Sqlcmd.CommandTimeout = 600;// 10 phut 
