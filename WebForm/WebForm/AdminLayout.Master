@@ -71,7 +71,7 @@
 
                 <div class="main-content container-fluid">
 
-                    <div style="width: 200%; height: auto; display: block; padding: 50px 100px 250px 200px">
+                    <div style="width: 120%; height: auto; display: block; padding: 50px 100px 250px 200px">
                         <asp:ContentPlaceHolder ID="SheetContent" runat="server" />
                     </div>
                 </div>

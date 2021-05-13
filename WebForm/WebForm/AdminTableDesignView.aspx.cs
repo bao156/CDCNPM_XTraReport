@@ -32,13 +32,18 @@ namespace WebForm
         //EVENT
         protected void DropDownList1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            string criterias = Hidden1.Value;
+            string[] subs = criterias.Split(new string[] { "_____" }, StringSplitOptions.None);
+            List<string> list = new List<string>(subs);
+            list.RemoveAt(list.Count - 1);
+
             string text = Master.dropDownListProperty.SelectedValue.ToString();
             Response.Write("<script>alert('b" + text + "')</script>");
             if (text.Equals("2"))
             {
                 //    //Response.Write("<script>alert('b" + text + "')</script>");
                 //    //// DropDownList1.SelectedValue = "Datasheet View";
-                Response.Redirect("DatasheetView.aspx");
+                Response.Redirect("DatasheetView.aspx?size="+criterias);
 
             }
             else if (text.Equals("1"))
@@ -270,6 +275,7 @@ namespace WebForm
                 input.Style["width"] = "60%";
                 input.Style["margin-left"] = "100px";
                 input.Style["height"] = "50px";
+                input.Attributes["onchange"] = "getCriteria(this)";
                 cellCriteria.Controls.Add(input);
                 rowCriteria.Cells.Add(cellCriteria);
             }
