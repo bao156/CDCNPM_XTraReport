@@ -11,12 +11,14 @@ namespace WebForm
 {
     public partial class AdminLayout : System.Web.UI.MasterPage
     {
-  
-        public static HashSet<string> listTable;
+
         public static HashSet<string> list = new HashSet<string>();
         protected void Page_Load(object sender, EventArgs e)
         {
-              list = GetTableDatabase(KetNoi.database);
+            list = GetTableDatabase(KetNoi.database);
+
+            DropDownList1.Attributes["border-radius"] = "8px";
+            DropDownList1.Attributes["border-color"] = "#8a8a5c";
 
             foreach (string i in list)
             {
@@ -38,33 +40,48 @@ namespace WebForm
                 PlaceHolder1.Controls.Add(btn);
             }
 
+
+
         }
+
+
         protected void btn_Click(object sender, EventArgs e)
         {
-            string table=((sender) as Button).Text;
+            string table = ((sender) as Button).Text;
             KetNoi.listTable.Add(table);
-            string url = "";
             int count = 1;
             foreach (string i in KetNoi.listTable)
             {
                 if (count == 1)
                 {
-                    url = KetNoi.listTable.Count.ToString() + "&table1=" + i;
+                    KetNoi.url = KetNoi.listTable.Count.ToString() + "&table1=" + i;
                 }
                 if (count != 1)
                 {
-                    url += "&table" + count + "=" + i;
+                    KetNoi.url += "&table" + count + "=" + i;
                 }
                 count++;
             }
-            Response.Redirect("AdminTableDesignView.aspx?size="+url);
+
+            Response.Redirect("AdminTableDesignView.aspx?size=" + KetNoi.url);
+        }
+        public DropDownList dropDownListProperty
+        {
+            get
+            {
+                return DropDownList1;
+            }
+            set
+            {
+                DropDownList1 = value;
+            }
         }
         private static HashSet<string> GetTableDatabase(string database)
         {
             HashSet<String> itemlist = new HashSet<string>();
             if (KetNoi.Connect(database) == 0) return itemlist;
 
-            string queryString = "select name from sys.tables";
+            string queryString = "select name from sys.tables where is_ms_shipped=0";
             SqlDataReader dataReader = KetNoi.ExecSqlDataReader(queryString);
             while (dataReader.Read())
             {

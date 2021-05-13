@@ -9,6 +9,7 @@ namespace WebForm
 {
     public partial class Test : System.Web.UI.Page
     {
+        public static string text = "";
         protected void Page_Load(object sender, EventArgs e)
         {
 

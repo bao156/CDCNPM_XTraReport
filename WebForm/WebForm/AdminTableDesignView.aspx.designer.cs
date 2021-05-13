@@ -22,6 +22,15 @@ namespace WebForm {
         protected global::System.Web.UI.WebControls.PlaceHolder PlaceHolder2;
         
         /// <summary>
+        /// txtDistance control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputHidden txtDistance;
+        
+        /// <summary>
         /// PlaceHolder1 control.
         /// </summary>
         /// <remarks>
@@ -29,5 +38,17 @@ namespace WebForm {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.PlaceHolder PlaceHolder1;
+        
+        /// <summary>
+        /// Master property.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated property.
+        /// </remarks>
+        public new WebForm.AdminLayout Master {
+            get {
+                return ((WebForm.AdminLayout)(base.Master));
+            }
+        }
     }
 }

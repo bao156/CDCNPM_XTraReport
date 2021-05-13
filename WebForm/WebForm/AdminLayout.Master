@@ -4,87 +4,95 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard - Automatic Report</title>
 
-    <link rel="stylesheet" href="/Assets/admin/assets/css/bootstrap.css">
-   <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="/Assets/admin/assets/vendors/chartjs/Chart.min.css">
-    <script src="https://kit.fontawesome.com/yourcode.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="/Assets/admin/assets/vendors/perfect-scrollbar/perfect-scrollbar.css">
-    <link rel="stylesheet" href="/Assets/admin/assets/css/app.css">
-    <link rel="shortcut icon" href="/Assets/admin/assets/title.png" type="image/x-icon">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/Assets/admin/assets/css/bootstrap.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <link rel="stylesheet" href="/Assets/admin/assets/vendors/chartjs/Chart.min.css" />
+    <script src="https://kit.fontawesome.com/yourcode.js"></script>
+    <link rel="stylesheet" href="/Assets/admin/assets/vendors/perfect-scrollbar/perfect-scrollbar.css" />
+    <link rel="stylesheet" href="/Assets/admin/assets/css/app.css" />
+    <link rel="shortcut icon" href="/Assets/admin/assets/title.png" type="image/x-icon" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
 </head>
 <body>
- <form id="form1" runat="server">
-      <div id="app">
-        <div id="sidebar" class='active'>
-            <div class="sidebar-wrapper active">
-                <div class="sidebar-header" >
-                    <img src="/Assets/admin/assets/logonew.png" alt="" srcset="" style="width:300px;height:280px;margin-left:-50px;" >
-                     <select name="cars" id="cars" style="width:200px;margin-left:-20px;height:50px">
-                             <option value="volvo" style="font-size:30px">SQL View</option>
-                                  <option value="saab">Datasheet View</option>
-                                  <option value="mercedes">Design View</option>
-                    </select>
-                </div>
-                <div class="sidebar-menu">
-                    <ul class="menu">
-                        <li class='sidebar-title'> <h3 style="font-weight:bold;font-family:Arial,Helvetica, sans-serif"><i class="fas fa-home" style="font-size:30px;color:lightblue;text-shadow:2px 2px 4px #000000;"></i>&nbsp;All Tables</h3></li>
-                       
-                <asp:PlaceHolder ID="PlaceHolder1" runat="server">
-                            </asp:PlaceHolder>
+    <form id="form1" runat="server">
 
-                
-                </div>
-                <button class="sidebar-toggler btn x"><i data-feather="x" ></i></button>
-            </div>
-        </div>
-        <div id="main">
-            <nav class="navbar navbar-header navbar-expand navbar-light">
-                <a class="sidebar-toggler" href="#"><span class="navbar-toggler-icon"></span></a>
-                <button class="btn navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav d-flex align-items-center navbar-light ms-auto">
-                    
-                        
-                  
-                    </ul>
-                </div>
-            </nav>
-             
-            <div class="main-content container-fluid">
-                <div class="page-title">
-                       <asp:ContentPlaceHolder  ID="SheetContent" runat="server" />
-                </div>
-                 <h1 style="margin-bottom:400px"></h1>
-            </div>
+        <div id="app">
+            <div id="sidebar" class='active'>
 
-           <%--<footer>
-                <div class="footer clearfix mb-0 text-muted">
+
+                <div class="sidebar-wrapper active">
+                    <div class="sidebar-header">
+                        <img src="/Assets/admin/assets/logonew.png" alt="" style="width: 300px; height: 280px; margin-left: -50px;" />
+                    </div>
+
+                    <div class="sidebar-menu">
+                        <ul class="menu">
+                            <div style="width: 100px !important; height: 50px !important; margin-left: 25px !important">
+                                <asp:DropDownList ID="DropDownList1" runat="server" AutoPostBack="True"
+                                    Height="50px" Width="200px" Font-Bold="true" Font-Size="Larger">
+                                    <asp:ListItem Text="Home" Value="0" Selected="true" />
+                                    <asp:ListItem Text="Design View" Value="1" />
+                                    <asp:ListItem Text="Datasheet View" Value="2" />
+                                    <asp:ListItem Text="SQL View" Value="3" />
+                                </asp:DropDownList>
+                            </div>
+                            <li class='sidebar-title'>
+                                <h3 style="font-weight: bold; font-family: Arial,Helvetica, sans-serif"><i class="fas fa-home" style="font-size: 30px; color: lightblue; text-shadow: 2px 2px 4px #000000;"></i>&nbsp;All Tables</h3>
+                            </li>
+
+
+                            <asp:PlaceHolder ID="PlaceHolder1" runat="server"></asp:PlaceHolder>
+                        </ul>
+                    </div>
+                    <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
+                </div>
+            </div>
+            <div id="main">
+
+                <nav class="navbar navbar-header navbar-expand navbar-light">
+                    <a class="sidebar-toggler" href="#"><span class="navbar-toggler-icon"></span></a>
+                    <button class="btn navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav d-flex align-items-center navbar-light ms-auto">
+                        </ul>
+                    </div>
+                </nav>
+
+                <div class="main-content container-fluid">
+
+                    <div style="width: 200%; height: auto; display: block; padding: 50px 100px 250px 200px">
                         <asp:ContentPlaceHolder ID="SheetContent" runat="server" />
+                    </div>
                 </div>
-            </footer>--%>
+
+                <footer>
+                    <div style="background-color: white; margin-bottom: -300px; height: 60px;">
+                        <hr class="rounded">
+                        <asp:ContentPlaceHolder ID="TableContent" runat="server" />
+                    </div>
+                </footer>
+            </div>
         </div>
-    </div>
-    <script src="/Assets/admin/assets/js/feather-icons/feather.min.js"></script>
-    <script src="/Assets/admin/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-    <script src="/Assets/admin/assets/js/app.js"></script>
+        <script src="/Assets/admin/assets/js/feather-icons/feather.min.js"></script>
+        <script src="/Assets/admin/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+        <script src="/Assets/admin/assets/js/app.js"></script>
 
-    <script src="/Assets/admin/assets/vendors/chartjs/Chart.min.js"></script>
-    <script src="/Assets/admin/assets/vendors/apexcharts/apexcharts.min.js"></script>
-    <script src="/Assets/admin/assets/js/pages/dashboard.js"></script>
+        <script src="/Assets/admin/assets/vendors/chartjs/Chart.min.js"></script>
+        <script src="/Assets/admin/assets/vendors/apexcharts/apexcharts.min.js"></script>
+        <script src="/Assets/admin/assets/js/pages/dashboard.js"></script>
 
-    <script src="/Assets/admin/assets/js/main.js"></script>
+        <script src="/Assets/admin/assets/js/main.js"></script>
     </form>
 </body>
 </html>

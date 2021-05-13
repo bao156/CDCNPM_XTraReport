@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -17,9 +18,14 @@ namespace WebForm
         public static String username = "";
         public static String mlogin = "sa";
         public static String password = "123456";
-        public static HashSet<string> listTable=new HashSet<string>();
+        public static HashSet<string> listTable = new HashSet<string>();
         public static string database = "";
         public static HashSet<ObjectQuery> ObjectQueryList = new HashSet<ObjectQuery>();
+        public static List<ForeignKeyOject> ListFkTableQuery = new List<ForeignKeyOject>();
+        public static string url = "";
+        public static string queryString = "";
+        public static List<string> critiria = new List<string>();
+        public static string testcr = "";
         public static int Connect(string database)
         {
             if (KetNoi.conn != null && KetNoi.conn.State == ConnectionState.Open)
@@ -41,6 +47,235 @@ namespace WebForm
                 return 0;
             }
         }
+        public static string GetQueryText()
+        {
+            KetNoi.queryString = "Select ";
+            int count = 1;
+
+            HashSet<string> ListTableName = new HashSet<string>();
+            foreach (ObjectQuery a in KetNoi.ObjectQueryList)
+            {
+                if (count != KetNoi.ObjectQueryList.Count)
+                    KetNoi.queryString += a.attributeName + ", ";
+                else KetNoi.queryString += a.attributeName + "\nFrom ";
+                count++;
+            }
+
+            //LẤY NHỮNG LOẠI BẢN CÓ TRONG DANH SÁCH SELECT
+            foreach (ObjectQuery a in KetNoi.ObjectQueryList)
+            {
+                ListTableName.Add(a.tableName);
+            }
+
+            //VIẾT CHO FROM
+            count = 1;
+            foreach (string table in ListTableName)
+            {
+                if (count != ListTableName.Count)
+                    KetNoi.queryString += table + ", ";
+                else KetNoi.queryString += table + "";
+                count++;
+            }
+
+
+            //VIẾT CHO WHERE
+            KetNoi.queryString += "\n Where ";
+
+
+            //DANH SÁCH TRẢ VỀ CÁI NÀO FALSE BỎ KO THÊM ZO
+            HashSet<ForeignKeyOject> listTemp = KetNoi.getForeignKeyListToQuery();
+            ListFkTableQuery.Clear();
+            foreach (ForeignKeyOject t in listTemp)
+            {
+                if (t.isCheck == true) ListFkTableQuery.Add(t);
+            }
+
+            List<ObjectQuery> listFK = new List<ObjectQuery>();
+            List<ObjectQuery> listPK = new List<ObjectQuery>();
+
+            //CHẠY TỪNG QUAN HỆ CÓ TRONG DANH SÁCH LẤY ĐƯỢC
+            foreach (ForeignKeyOject ob in ListFkTableQuery)
+            {
+                //THUỘC TÍNH ĐẦU TIÊN TRONG OBJECT LÀ BẢNG KHÓA NGOẠI
+                //LỆNH DƯỚI THẤY TÊN CỘT KHÓA NGẠI TRONG BẢNG CHỨA KHÓA NGOẠI
+                string strf =
+                  "select COLUMN_NAME from INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE where CONSTRAINT_NAME='FK_" + ob.tableNameF + "_" + ob.tableNameK + "'";
+                foreach (string a in getColumnNameKey(strf))
+                {
+                    ObjectQuery temp = new ObjectQuery();
+                    temp.attributeName = a;
+                    temp.tableName = ob.tableNameF;
+                    listFK.Add(temp);
+                }
+                //;
+
+
+
+                //LEEHNH NÀY LẤY KHÓA CHÍNH TRONG BẢNG CHỨA KHÓA CHÍNH
+                string strp =
+                  "select COLUMN_NAME from INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE where CONSTRAINT_NAME='PK_" + ob.tableNameK + "'";
+                foreach (string a in getColumnNameKey(strp))
+                {
+                    ObjectQuery temp = new ObjectQuery();
+                    temp.attributeName = a;
+                    temp.tableName = ob.tableNameK;
+                    listPK.Add(temp);
+                }
+
+            }
+
+            //GHÉP ZO NÈ HIHI
+            for (int i = 0; i < listPK.Count; i++)
+            {
+                if (i != listPK.Count - 1)
+                    KetNoi.queryString += listPK[i].tableName + "." + listFK[i].attributeName + " = " +
+                            listFK[i].tableName + "." + listFK[i].attributeName + " and ";
+                else KetNoi.queryString += listPK[i].tableName + "." + listPK[i].attributeName + " = " +
+                            listFK[i].tableName + "." + listFK[i].attributeName;
+            }
+            return KetNoi.queryString;
+
+        }
+
+        public static HashSet<ForeignKeyOject> getForeignKeyListToQuery()
+        {
+            HashSet<ForeignKeyOject> hashForeinKey = new HashSet<ForeignKeyOject>();
+            List<ForeignKeyOject> listForeginKey = new List<ForeignKeyOject>();
+
+            //LẤY CÁC BẢNG CÓ ĐỂ QUERY KHÔNG CÓ TRÙNG GIÁ TRỊ
+            HashSet<string> listDistinceTable = new HashSet<string>();
+            foreach (ObjectQuery ob in KetNoi.ObjectQueryList)
+            {
+                listDistinceTable.Add(ob.tableName);
+            }
+
+            //LẤY TẤT CẢ CÁC KHÓA NGOẠI CÓ TRONG DATABASE
+            List<string> listAllForeginKey = new List<string>();
+            listAllForeginKey = KetNoi.getAllForeignKeyInDatabase(listAllForeginKey);
+
+
+            //DO HASHSET KO LẤY RA ĐƯỢC VỊ TRÍ KHI CHẠY VÒNG FOR
+            List<ObjectQuery> listObjectQueryTemp = new List<ObjectQuery>(KetNoi.ObjectQueryList);
+
+
+
+
+            //TẠO CÁC TỔ HỢP KHÓA NGOẠI TỪ CÁC BẢN
+            for (int i = 0; i < listObjectQueryTemp.Count - 1; i++)
+            {
+                string tableNameF;
+                tableNameF = listObjectQueryTemp[i].tableName;
+                for (int j = i + 1; j < listObjectQueryTemp.Count; j++)
+                {
+                    ForeignKeyOject temp = new ForeignKeyOject();
+                    temp.tableNameF = tableNameF;
+                    temp.tableNameK = listObjectQueryTemp[j].tableName;
+                    listForeginKey.Add(temp);
+                }
+
+            }
+
+
+
+            //List<string> test = new List<string>();
+            //List<int> testint = new List<int>();
+            //LỌC RA KHÓA NGOẠI NÀO SẼ DÙNG ĐƯỢC 
+            for (int i = 0; i < listForeginKey.Count; i++)
+            {
+                string temp1 = listForeginKey[i].tableNameF + "_" + listForeginKey[i].tableNameK;
+                string temp2 = listForeginKey[i].tableNameK + "_" + listForeginKey[i].tableNameF;
+                //test.Add(temp1);
+                //test.Add(temp2);
+                bool check = false;
+                foreach (string key in listAllForeginKey)
+                {
+                    if (key == temp1)
+                    {
+                        check = true;
+                        listForeginKey[i].isCheck = true;
+
+
+                    }
+                    else if (key == temp2)
+                    {
+                        //ĐÔIT LẠI CHO ĐÚNG VỚI CÚ PHÁP TRONG TRUY VẤN LÀ TÊN BẢNG CHỨA KHÓA NGOẠI TRƯỚC MỚI KHÓA CHÍNH
+                        check = true;
+                        string temps = listForeginKey[i].tableNameF;
+                        listForeginKey[i].tableNameF = listForeginKey[i].tableNameK;
+                        listForeginKey[i].tableNameK = temps;
+
+                        listForeginKey[i].isCheck = true;
+                    }
+
+                }
+                if (check == false)
+                {
+                    listForeginKey[i].isCheck = false;
+                }
+
+            }
+
+            foreach (ForeignKeyOject t in listForeginKey)
+            {
+                if (KetNoi.checkInsideHash(hashForeinKey, t) == false) hashForeinKey.Add(t);
+
+            }
+            //DANH SÁCH LÚC NÀY LẤY ĐÃ ĐƯỢC SẮP XẾP ĐÚNG CÚ PHÁP
+            return hashForeinKey;
+
+        }
+
+        public static List<String> getAllForeignKeyInDatabase(List<String> list)
+        {
+            if (KetNoi.Connect(KetNoi.database) == 0) return list;
+            String str = "select name from sys.objects where type='F'";
+            SqlDataReader dataReader = KetNoi.ExecSqlDataReader(str);
+            while (dataReader.Read())
+            {
+                string Output = dataReader.GetValue(0).ToString().Substring(3);
+                list.Add(Output);
+            }
+            return list;
+        }
+
+        public static List<String> getColumnNameKey(string str)
+        {
+            List<String> list = new List<string>();
+            KetNoi.Connect(KetNoi.database);
+            SqlDataReader dataReader = KetNoi.ExecSqlDataReader(str);
+            while (dataReader.Read())
+            {
+                string Output = dataReader.GetValue(0).ToString();
+                list.Add(Output);
+            }
+            return list;
+        }
+
+        public static bool checkInsideHash(HashSet<ForeignKeyOject> hash, ForeignKeyOject item)
+        {
+            bool check = false;
+
+            foreach (ForeignKeyOject a in hash)
+            {
+                if (item.tableNameF == a.tableNameF && item.tableNameK == a.tableNameK && item.isCheck == a.isCheck)
+                {
+                    check = true;
+                    break;
+                }
+            }
+
+            return check;
+        }
+
+
+        public static DataTable QueryDataTable()
+        {
+            KetNoi.Connect("QLGARA");
+            String str = KetNoi.GetQueryText();
+            DataTable dataTable = KetNoi.ExecSqlDataTable(str);
+            return dataTable;
+        }
+
 
         public static SqlDataReader ExecSqlDataReader(String strLenh)
         {
@@ -55,6 +290,7 @@ namespace WebForm
             }
             catch (SqlException ex)
             {
+                Console.WriteLine(ex.Message);
                 KetNoi.conn.Close();
                 return null;
             }
@@ -68,6 +304,7 @@ namespace WebForm
             conn.Close();
             return dt;
         }
+
 
         public static int ExecSqlNonQuery(String strlenh)
         {

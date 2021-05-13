@@ -9,5 +9,8 @@ namespace WebForm
     {
         public string tableName { set; get; }
         public string attributeName { set; get; }
+
+        public string critiria { set; get; }
+
     }
 }
