@@ -31,6 +31,15 @@ namespace WebForm {
         protected global::System.Web.UI.WebControls.DropDownList cbNameDatabase;
         
         /// <summary>
+        /// bdsDataBaseName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource bdsDataBaseName;
+        
+        /// <summary>
         /// SqlDataSource1 control.
         /// </summary>
         /// <remarks>

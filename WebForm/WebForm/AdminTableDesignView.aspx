@@ -3,8 +3,9 @@
 <%@ MasterType VirtualPath="~/AdminLayout.Master" %>
 
 
-<asp:Content ID="Content2" ContentPlaceHolderID="SheetContent" runat="server">
 
+<asp:Content ID="Content2" ContentPlaceHolderID="SheetContent" runat="server">
+    <asp:HiddenField ID="getHidden2" ClientIDMode="Static" runat="server" />
     <style>
         table, td, th {
             border: 1px solid #ddd;
@@ -25,26 +26,21 @@
             border-radius: 5px;
         }
     </style>
-
+    <script type="text/javascript">
+        function getCriteria(txt)
+        {
+            document.getElementById('<%=getHidden2.ClientID%>').value += txt.id + txt.value + "_____";
+        }
+    </script>
     <div>
-        <asp:PlaceHolder ID="PlaceHolder2" runat="server">
-            <input type="hidden" id="Hidden1" runat="server" />
-            <script type="text/javascript">
-                function getCriteria(txt) {
-                    alert(txt.value);
-                    document.getElementById("Hidden1").value += txt.id + txt.value + "___";
-                }
-            </script>
-        </asp:PlaceHolder>
+        <asp:PlaceHolder ID="PlaceHolder2" runat="server"></asp:PlaceHolder>
     </div>
 
 
-
-
 </asp:Content>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="TableContent" runat="server">
-    <asp:PlaceHolder ID="PlaceHolder1" runat="server">
-    </asp:PlaceHolder>
+    <asp:PlaceHolder ID="PlaceHolder1" runat="server"></asp:PlaceHolder>
 </asp:Content>
 
 

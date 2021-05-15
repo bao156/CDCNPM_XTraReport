@@ -20,12 +20,12 @@ namespace WebForm
         public static String password = "123456";
         public static HashSet<string> listTable = new HashSet<string>();
         public static string database = "";
-        public static HashSet<ObjectQuery> ObjectQueryList = new HashSet<ObjectQuery>();
+        public static List<ObjectQuery> ObjectQueryList = new List<ObjectQuery>();
         public static List<ForeignKeyOject> ListFkTableQuery = new List<ForeignKeyOject>();
         public static string url = "";
         public static string queryString = "";
         public static List<string> critiria = new List<string>();
-        public static string testcr = "";
+
         public static int Connect(string database)
         {
             if (KetNoi.conn != null && KetNoi.conn.State == ConnectionState.Open)
@@ -49,17 +49,53 @@ namespace WebForm
         }
         public static string GetQueryText()
         {
-            KetNoi.queryString = "Select ";
+            KetNoi.queryString = "SELECT ";
             int count = 1;
+            bool checkFK = false;
+            bool checkCriteria = false;
+            bool checkGroupBy = false;
 
             HashSet<string> ListTableName = new HashSet<string>();
             foreach (ObjectQuery a in KetNoi.ObjectQueryList)
             {
                 if (count != KetNoi.ObjectQueryList.Count)
-                    KetNoi.queryString += a.attributeName + ", ";
-                else KetNoi.queryString += a.attributeName + "\nFrom ";
+                {
+                    if (a.total != null)
+                    {
+                        KetNoi.queryString += a.total + "(" + a.tableName + "." + a.attributeName + "), as " + a.attributeName;
+                        checkGroupBy = true;
+                    }
+                    else
+                    {
+                        KetNoi.queryString += a.tableName + "." + a.attributeName + ", ";
+                    }
+
+                    //SẴN CHECK CRITERIA LUÔN
+                    if (a.critiria != null)
+                    {
+                        checkCriteria = true;
+                    }
+
+                }
+                else
+                {
+                    if (a.total != null)
+                    {
+                        KetNoi.queryString += a.total + "(" + a.tableName + "." + a.attributeName + ") as " + a.attributeName;
+                        checkGroupBy = true;
+                    }
+                    else
+                    {
+                        KetNoi.queryString += a.tableName + "." + a.attributeName;
+                    }
+
+
+                }
                 count++;
             }
+
+
+            KetNoi.queryString += "\r\n FROM ";
 
             //LẤY NHỮNG LOẠI BẢN CÓ TRONG DANH SÁCH SELECT
             foreach (ObjectQuery a in KetNoi.ObjectQueryList)
@@ -72,15 +108,18 @@ namespace WebForm
             foreach (string table in ListTableName)
             {
                 if (count != ListTableName.Count)
+                {
                     KetNoi.queryString += table + ", ";
-                else KetNoi.queryString += table + "";
+                }
+                else
+                {
+                    KetNoi.queryString += table + "";
+                }
                 count++;
             }
 
 
             //VIẾT CHO WHERE
-            KetNoi.queryString += "\n Where ";
-
 
             //DANH SÁCH TRẢ VỀ CÁI NÀO FALSE BỎ KO THÊM ZO
             HashSet<ForeignKeyOject> listTemp = KetNoi.getForeignKeyListToQuery();
@@ -123,15 +162,75 @@ namespace WebForm
                 }
 
             }
-
+            if (listPK.Count != 0 || checkCriteria == true)
+            {
+                KetNoi.queryString += "\r\n WHERE ";
+            }
+            bool checkJoin = false;
             //GHÉP ZO NÈ HIHI
             for (int i = 0; i < listPK.Count; i++)
             {
                 if (i != listPK.Count - 1)
+                {
                     KetNoi.queryString += listPK[i].tableName + "." + listFK[i].attributeName + " = " +
-                            listFK[i].tableName + "." + listFK[i].attributeName + " and ";
-                else KetNoi.queryString += listPK[i].tableName + "." + listPK[i].attributeName + " = " +
+                         listFK[i].tableName + "." + listFK[i].attributeName + " and ";
+
+
+                    checkJoin = true;
+                }
+                else
+                {
+
+                    KetNoi.queryString += listPK[i].tableName + "." + listPK[i].attributeName + " =" +
                             listFK[i].tableName + "." + listFK[i].attributeName;
+                    checkJoin = true;
+                }
+
+            }
+
+            //PHẢI CHẠY RIEEGN ĐÂU PHẢI CÁI NÀO CŨNG CÓ ĐIỀU KIỆN
+
+            int length = KetNoi.ObjectQueryList.Count;
+            for (int i = 0; i < length; i++)
+            {
+                if (KetNoi.ObjectQueryList[i].critiria != null)
+                {
+                    if (checkJoin == true)
+                    {
+                        KetNoi.queryString += " and " + KetNoi.ObjectQueryList[i].tableName + "." + ObjectQueryList[i].attributeName + " ='" + ObjectQueryList[i].critiria + "' ";
+                    }
+                    else
+                    {
+                        KetNoi.queryString += KetNoi.ObjectQueryList[i].tableName + "." + ObjectQueryList[i].attributeName + "= '" + ObjectQueryList[i].critiria + "' ";
+                    }
+
+                }
+            }
+
+
+            //VIẾT CHO NẾU CÓ GROUP BY NÈ
+            count = 0; //NÀY CHECK CHẠY ĐẦU TIÊN
+            if (checkGroupBy == true)
+            {
+                KetNoi.queryString += "\r\n GROUP BY ";
+                length = ObjectQueryList.Count;
+                for (int i = 0; i < length; i++)
+                {
+                    if (KetNoi.ObjectQueryList[i].total == null)
+                    {
+                        if (count == 0)
+                        {
+                            KetNoi.queryString += " " + KetNoi.ObjectQueryList[i].tableName + "." + KetNoi.ObjectQueryList[i].attributeName;
+                            count++;
+                        }
+                        else
+                        {
+                            KetNoi.queryString += ", " + KetNoi.ObjectQueryList[i].tableName + "." + KetNoi.ObjectQueryList[i].attributeName;
+                        }
+                    }
+                }
+
+
             }
             return KetNoi.queryString;
 
@@ -270,8 +369,9 @@ namespace WebForm
 
         public static DataTable QueryDataTable()
         {
-            KetNoi.Connect("QLGARA");
-            String str = KetNoi.GetQueryText();
+            KetNoi.Connect(KetNoi.database);
+            String str = KetNoi.queryString;
+            str.Replace("\r\n", " ");
             DataTable dataTable = KetNoi.ExecSqlDataTable(str);
             return dataTable;
         }

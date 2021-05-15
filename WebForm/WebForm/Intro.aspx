@@ -44,10 +44,7 @@
                 </div>
             </div>
         </header>
-        <!-- #header -->
-        <!--==========================
-      Hero Section
-    ============================-->
+
         <section id="hero" class="wow fadeIn">
             <div class="hero-container">
                 <h1>Welcome to  Automatic Report</h1>
@@ -55,9 +52,9 @@
                 <img src="/Assets/intro/img/hero-img.png" alt="Hero Imgs">
 
 
-
-                <asp:DropDownList ID="cbNameDatabase" runat="server" DataSourceID="SqlDataSource1" DataTextField="name" DataValueField="name" Style="margin-bottom: 20px; width: 400px; height: 50px; margin-top: 50px; text-align: center; border-radius: 10px; border-color: darkgreen">
+                <asp:DropDownList ID="cbNameDatabase" runat="server" DataSourceID="bdsDataBaseName" DataTextField="name" DataValueField="name" Style="margin-bottom: 20px; width: 400px; height: 50px; margin-top: 50px; text-align: center; border-radius: 10px; border-color: darkgreen">
                 </asp:DropDownList>
+                <asp:SqlDataSource ID="bdsDataBaseName" runat="server" ConnectionString="<%$ ConnectionStrings:ViewDatabaseName %>" SelectCommand="SELECT * FROM [view_databasename]"></asp:SqlDataSource>
                 <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:Java5ConnectionString %>" SelectCommand="SELECT * FROM [database_name]"></asp:SqlDataSource>
 
                 <asp:LinkButton class="btn-get-started scrollto" ID="btnStart" runat="server" OnClick="btnStart_Click">Get Start</asp:LinkButton>
@@ -72,9 +69,6 @@
             <div class="container">
                 <div class="row">
                 </div>
-
-
-
             </div>
 
 

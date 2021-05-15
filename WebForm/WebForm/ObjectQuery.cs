@@ -12,5 +12,7 @@ namespace WebForm
 
         public string critiria { set; get; }
 
+        public string total { set; get; }
+
     }
 }

@@ -19,7 +19,7 @@ namespace WebForm
         protected void btnStart_Click(object sender, EventArgs e)
         {
             KetNoi.listTable = new HashSet<string>();
-            KetNoi.ObjectQueryList = new HashSet<ObjectQuery>();
+            KetNoi.ObjectQueryList = new List<ObjectQuery>();
             KetNoi.database = cbNameDatabase.SelectedValue;
             Response.Redirect("AdminTableDesignView.aspx?size=0");
         }

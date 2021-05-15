@@ -11,6 +11,7 @@ namespace WebForm
 {
     public partial class AdminLayout : System.Web.UI.MasterPage
     {
+        HtmlInputHidden inputHidden = new HtmlInputHidden();
 
         public static HashSet<string> list = new HashSet<string>();
         protected void Page_Load(object sender, EventArgs e)
@@ -39,9 +40,6 @@ namespace WebForm
                 PlaceHolder1.Controls.Add(new LiteralControl("<i class=\"fas fa-table\" style=\"font-size:23px;color:lightblue;text-shadow:2px 2px 4px #000000;\"></i>"));
                 PlaceHolder1.Controls.Add(btn);
             }
-
-
-
         }
 
 
@@ -49,6 +47,8 @@ namespace WebForm
         {
             string table = ((sender) as Button).Text;
             KetNoi.listTable.Add(table);
+
+            //XÓA BỚT
             int count = 1;
             foreach (string i in KetNoi.listTable)
             {
@@ -76,6 +76,9 @@ namespace WebForm
                 DropDownList1 = value;
             }
         }
+
+
+
         private static HashSet<string> GetTableDatabase(string database)
         {
             HashSet<String> itemlist = new HashSet<string>();

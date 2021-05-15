@@ -15,13 +15,13 @@ namespace WebForm
         public static int distanceLeft = 280;
         public static bool checkExist;
 
-
-
         protected void Page_Load(object sender, EventArgs e)
         {
+
             int soluong = int.Parse(Request.QueryString["size"]);
             if (soluong != 0)
             {
+                PlaceHolder2.Controls.Clear();
                 createTableData(soluong);
             }
             Master.dropDownListProperty.SelectedIndexChanged += new EventHandler(DropDownList1_SelectedIndexChanged);
@@ -32,19 +32,43 @@ namespace WebForm
         //EVENT
         protected void DropDownList1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string criterias = Hidden1.Value;
+            string criterias = getHidden2.Value;
             string[] subs = criterias.Split(new string[] { "_____" }, StringSplitOptions.None);
-            List<string> list = new List<string>(subs);
-            list.RemoveAt(list.Count - 1);
+            List<string> listCriteria = new List<string>(subs);
+            Dictionary<int, string> listFilter = new Dictionary<int, string>();
+            listCriteria.RemoveAt(listCriteria.Count - 1);
+            //LẤY SỐ ĐẦU TIÊN RA NÈ
+            //TableContent_bi
+            for (int i = 0; i < listCriteria.Count; i++)
+            {
+                int key = Int16.Parse(listCriteria[i].Remove(0, 13)[0].ToString());
+                string data = listCriteria[i].Remove(0, 14);
+                if (listFilter.ContainsKey(key))
+                {
+                    listFilter[key] = data;
+                }
+                else
+                {
+                    listFilter.Add(key, data);
+                }
+            }
+
+            listCriteria.Sort();
+
+
+            //bỏ zo Object// Chuye
+            foreach (int key in listFilter.Keys)
+            {
+                KetNoi.ObjectQueryList[key].critiria = listFilter[key];
+            }
+
 
             string text = Master.dropDownListProperty.SelectedValue.ToString();
-            Response.Write("<script>alert('b" + text + "')</script>");
             if (text.Equals("2"))
             {
                 //    //Response.Write("<script>alert('b" + text + "')</script>");
                 //    //// DropDownList1.SelectedValue = "Datasheet View";
-                Response.Redirect("DatasheetView.aspx?size="+criterias);
-
+                Response.Redirect("DatasheetView.aspx?size=");
             }
             else if (text.Equals("1"))
             {
@@ -59,6 +83,27 @@ namespace WebForm
 
 
         }
+
+        protected void DropDownGroupBy_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            string attribute = (((sender) as DropDownList).ID);
+            string table = (((sender) as DropDownList).CssClass);
+            string value = (((sender) as DropDownList).Text);
+            for (int i = 0; i < KetNoi.ObjectQueryList.Count; i++)
+            {
+                if (KetNoi.ObjectQueryList[i].attributeName == attribute && KetNoi.ObjectQueryList[i].attributeName == attribute)
+                {
+                    KetNoi.ObjectQueryList[i].total = value;
+                }
+            }
+
+        }
+
+
+
+
+
         private static List<string> GetColumnTable(string database, string table)
         {
             List<String> itemlist = new List<string>();
@@ -111,7 +156,7 @@ namespace WebForm
             {
                 string name = Request.QueryString["table" + (i + 1)];
                 //create a new HtmlTable object
-                Table table = new Table();
+                Table tableT = new Table();
                 TableRow rowTableName = new TableRow();
                 TableCell cellTableName = new TableCell();
                 cellTableName.Style["color"] = "#145214";
@@ -122,7 +167,7 @@ namespace WebForm
                 rowTableName.Cells.Add(cellTableName);
                 List<string> itemColumns = new List<string>();
                 itemColumns = GetColumnTable(KetNoi.database, name);
-                table.Rows.Add(rowTableName);
+                tableT.Rows.Add(rowTableName);
                 foreach (string a in itemColumns)
                 {
                     TableRow rowAttribute;
@@ -144,23 +189,23 @@ namespace WebForm
                     rowAttribute.Cells.Add(cellAttribute);
                     rowAttribute.Style["border"] = "none";
                     cellAttribute.Style["border"] = "none";
-                    table.Controls.Add(rowAttribute);
+                    tableT.Controls.Add(rowAttribute);
                 }
                 ////SET thuộc tính nè
-                table.Style["width"] = "15%";
-                table.Style["border"] = "3px solid gray";
+                tableT.Style["width"] = "15%";
+                tableT.Style["border"] = "3px solid gray";
                 if (i != 0)
                 {
                     string marginT = (AdminTableDesignView.distanceTop * (i)).ToString() + "px";
                     string marginL = (AdminTableDesignView.distanceLeft * (i)).ToString() + "px";
-                    table.Style["margin-top"] = marginT;
-                    table.Style["margin-left"] = marginL;
+                    tableT.Style["margin-top"] = marginT;
+                    tableT.Style["margin-left"] = marginL;
 
                 }
                 cellTableName.Style["text-align"] = "center";
                 cellTableName.Style["color"] = "green";
-
-                PlaceHolder2.Controls.Add(table);
+                tableT.Attributes["runat"] = "server";
+                PlaceHolder2.Controls.Add(tableT);
 
             }
         }
@@ -170,13 +215,12 @@ namespace WebForm
         {
             PlaceHolder1.Controls.Clear();
             Table table = new Table();
-
             //Chạy Thuộc tính
             TableRow rowAttribute = new TableRow();
             rowAttribute.Style["height"] = "100px";
             TableCell cellAttributeTitle = new TableCell();
             cellAttributeTitle.Style["color"] = "white";
-            cellAttributeTitle.Style["background-color"] = "#595959";
+            cellAttributeTitle.Style["background-color"] = "#344a5b";
             cellAttributeTitle.Style["font-weight"] = "bold";
             cellAttributeTitle.Style["width"] = "50px";
             cellAttributeTitle.Style["font-family"] = "Arial,Helvetica, sans-serif";
@@ -200,7 +244,7 @@ namespace WebForm
             rowTableName.Style["height"] = "100px";
             TableCell cellTableNameTitle = new TableCell();
             cellTableNameTitle.Style["color"] = "white";
-            cellTableNameTitle.Style["background-color"] = "#595959";
+            cellTableNameTitle.Style["background-color"] = "#344a5b";
             cellTableNameTitle.Style["font-weight"] = "bold";
             cellTableNameTitle.Style["font-family"] = "Arial,Helvetica, sans-serif";
             cellTableNameTitle.Text = "Table";
@@ -222,28 +266,34 @@ namespace WebForm
             rowTotal.Style["height"] = "100px";
             TableCell cellTotalTitle = new TableCell();
             cellTotalTitle.Style["color"] = "white";
-            cellTotalTitle.Style["background-color"] = "#595959";
+            cellTotalTitle.Style["background-color"] = "#344a5b";
             cellTotalTitle.Style["font-weight"] = "bold";
             cellTotalTitle.Style["font-family"] = "Arial,Helvetica, sans-serif";
             cellTotalTitle.Text = "Total";
             rowTotal.Cells.Add(cellTotalTitle);
 
-
+            int count = 0;
             foreach (ObjectQuery a in KetNoi.ObjectQueryList)
             {
                 TableCell cellSort = new TableCell();
+                cellSort.HorizontalAlign = HorizontalAlign.Left;
                 DropDownList dropdownlist = new DropDownList();
                 List<string> droplist = new List<string>();
                 dropdownlist.Items.Add("Group by"); dropdownlist.Items.Add("Sum"); dropdownlist.Items.Add("Min"); dropdownlist.Items.Add("Max"); dropdownlist.Items.Add("Count");
                 dropdownlist.Items.Add("Avg");
-
                 dropdownlist.Style["border-radius"] = "8px";
                 dropdownlist.Style["border-color"] = "#476b6b";
                 dropdownlist.Style["box-shadow"] = "#c2d6d6";
                 dropdownlist.Style["width"] = "60%";
                 dropdownlist.Style["margin-left"] = "100px";
                 dropdownlist.Style["height"] = "50px";
-
+                dropdownlist.ID = a.attributeName;
+                dropdownlist.CssClass = a.tableName;
+                dropdownlist.SelectedIndexChanged += DropDownGroupBy_SelectedIndexChanged;
+                dropdownlist.Attributes["runat"] = "server";
+                dropdownlist.Attributes["OnSelectedIndexChanged"] = "DropDownGroupBy_SelectedIndexChanged";
+                dropdownlist.AutoPostBack = true;
+                count++;
                 cellSort.Controls.Add(dropdownlist);
                 rowTotal.Cells.Add(cellSort);
             }
@@ -258,26 +308,33 @@ namespace WebForm
             rowCriteria.Style["height"] = "100px";
             TableCell cellCriteriaTitle = new TableCell();
             cellCriteriaTitle.Style["color"] = "white";
-            cellCriteriaTitle.Style["background-color"] = "#595959";
+            cellCriteriaTitle.Style["background-color"] = "#344a5b";
             cellCriteriaTitle.Style["font-weight"] = "bold";
             cellCriteriaTitle.Style["font-family"] = "Arial,Helvetica, sans-serif";
             cellCriteriaTitle.Text = "Criteria";
             rowCriteria.Cells.Add(cellCriteriaTitle);
 
-
-            foreach (ObjectQuery a in KetNoi.ObjectQueryList)
-            {
+            count = 0;
+           for(int i=0;i< KetNoi.ObjectQueryList.Count;i++)
+           { 
                 TableCell cellCriteria = new TableCell();
+                cellCriteria.HorizontalAlign = HorizontalAlign.Left;
                 TextBox input = new TextBox();
                 input.Style["border-radius"] = "8px";
                 input.Style["border-color"] = "#476b6b";
                 input.Style["box-shadow"] = "#c2d6d6";
                 input.Style["width"] = "60%";
                 input.Style["margin-left"] = "100px";
+                input.ID = count.ToString();
                 input.Style["height"] = "50px";
                 input.Attributes["onchange"] = "getCriteria(this)";
+                if(KetNoi.ObjectQueryList[i].critiria!=null)
+                {
+                    input.Text = KetNoi.ObjectQueryList[i].critiria;
+                }
                 cellCriteria.Controls.Add(input);
                 rowCriteria.Cells.Add(cellCriteria);
+                count++;
             }
             table.Rows.Add(rowCriteria);
 
@@ -287,7 +344,7 @@ namespace WebForm
             rowSort.Style["height"] = "100px";
             TableCell cellSortTitle = new TableCell();
             cellSortTitle.Style["color"] = "white";
-            cellSortTitle.Style["background-color"] = "#595959";
+            cellSortTitle.Style["background-color"] = "#344a5b";
             cellSortTitle.Style["font-weight"] = "bold";
             cellSortTitle.Style["font-family"] = "Arial,Helvetica, sans-serif";
             cellSortTitle.Text = "Sort";
@@ -312,7 +369,7 @@ namespace WebForm
             rowClone1.Style["height"] = "100px";
             TableCell cellCloneTitle1 = new TableCell();
             cellCloneTitle1.Style["color"] = "white";
-            cellCloneTitle1.Style["background-color"] = "#595959";
+            cellCloneTitle1.Style["background-color"] = "#344a5b";
             rowClone1.Cells.Add(cellCloneTitle1);
 
 
@@ -330,7 +387,7 @@ namespace WebForm
             rowClone2.Style["height"] = "100px";
             TableCell cellCloneTitle2 = new TableCell();
             cellCloneTitle2.Style["color"] = "white";
-            cellCloneTitle2.Style["background-color"] = "#595959";
+            cellCloneTitle2.Style["background-color"] = "#344a5b";
             rowClone2.Cells.Add(cellCloneTitle2);
 
 
@@ -348,7 +405,7 @@ namespace WebForm
             rowClone3.Style["height"] = "100px";
             TableCell cellCloneTitle3 = new TableCell();
             cellCloneTitle3.Style["color"] = "white";
-            cellCloneTitle3.Style["background-color"] = "#595959";
+            cellCloneTitle3.Style["background-color"] = "#344a5b";
             rowClone3.Cells.Add(cellCloneTitle3);
 
 
